@@ -1,22 +1,22 @@
 {
-  "sha": "5d33a42e1c99d0f23657a4bee575d16396839af4",
-  "url": "https://api.github.com/repos/EXBO-Studio/stalzone-database/git/trees/5d33a42e1c99d0f23657a4bee575d16396839af4",
+  "sha": "597f594521a7aac771bba71d7c74af0764cc8baa",
+  "url": "https://api.github.com/repos/EXBO-Studio/stalzone-database/git/trees/597f594521a7aac771bba71d7c74af0764cc8baa",
   "tree": [
         {
-        "path": ".gitignore",
-        "mode": "100644",
+        "path": "0r2g1.json",
+        "mode": "100755",
         "type": "blob",
-        "sha": "50f506829744b4f27c056d3f3c6dd03f0f304774",
-        "size": 93,
-        "url": "https://api.github.com/repos/EXBO-Studio/stalzone-database/git/blobs/50f506829744b4f27c056d3f3c6dd03f0f304774"
+        "sha": "bf02fb353f20379cd111a81f5cde0f6f10918280",
+        "size": 21017,
+        "url": "https://api.github.com/repos/EXBO-Studio/stalzone-database/git/blobs/bf02fb353f20379cd111a81f5cde0f6f10918280"
         },
         {
-        "path": "global",
-        "mode": "040000",
-        "type": "tree",
-        "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
-        "size": 11357,
-        "url": "https://api.github.com/repos/EXBO-Studio/stalzone-database/git/blobs/261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+          "path": "0r2zd.json",
+          "mode": "100755",
+          "type": "blob",
+          "sha": "1841e60fd1251a557c2322ad5d26698f471bdb9d",
+          "size": 21398,
+          "url": "https://api.github.com/repos/EXBO-Studio/stalzone-database/git/blobs/1841e60fd1251a557c2322ad5d26698f471bdb9d"
         }
     ],
   "truncated": false

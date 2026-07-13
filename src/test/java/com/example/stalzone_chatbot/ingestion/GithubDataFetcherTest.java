@@ -43,7 +43,7 @@ class GithubDataFetcherTest {
 
         // Load fixture data for the tree response
         String treeResponseBody = new String(
-            getClass().getResourceAsStream("/tree-response.json").readAllBytes()
+            getClass().getResourceAsStream("/fixtures/tree-response.json").readAllBytes()
         );
 
         // Stub the GitHub API response for the tree endpoint
