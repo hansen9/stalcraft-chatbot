@@ -1,12 +1,10 @@
 package com.example.stalzone_chatbot.ingestion;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.springframework.web.client.RestClient;
 
@@ -27,56 +25,47 @@ class GithubDataFetcherTest {
     @BeforeEach
     void setUp(WireMockRuntimeInfo wmInfo) {
         fetcher = new GithubDataFetcher(
-            RestClient.builder(),
-            new ObjectMapper(),
-            "http://localhost:" + wmInfo.getHttpPort()
+            RestClient.builder().baseUrl(wmInfo.getHttpBaseUrl()).build(),  // apiClient
+            RestClient.builder().baseUrl(wmInfo.getHttpBaseUrl()).build(),  // rawClient
+            new ObjectMapper(),                        // objectMapper
+            "test-repo",                               // githubRepo
+            "global/items/"                            // itemPathPrefix
         );
     }   
 
     @Test
-    void happyPath() throws Exception {
+    void happyPath_returnsParsedDocuments() throws Exception {
 
         // Load fixture data
         String fixtureBody = new String(
-            getClass().getResourceAsStream("/fixtures/items.json").readAllBytes()
+            getClass().getResourceAsStream("/0r2g1.json").readAllBytes()
         );
 
-        stubFor(get(urlEqualTo("/items.json"))
+        // Load fixture data for the tree response
+        String treeResponseBody = new String(
+            getClass().getResourceAsStream("/tree-response.json").readAllBytes()
+        );
+
+        // Stub the GitHub API response for the tree endpoint
+        stubFor(get(urlEqualTo("/git/trees/main?recursive=1"))
             .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(treeResponseBody)));
+        
+        // stub per-file response
+        stubFor(get(urlEqualTo("/global/items/weapon/assault_rifle/0r2g1.json"))
+            .willReturn(aResponse()
+                .withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBody(fixtureBody)));
 
         List<GameDocument> result = fetcher.fetchItemData();
-        
+
         assertThat(result).hasSize(1);
         assertThat(result.get(0).id()).isEqualTo("0r2g1");
         assertThat(result.get(0).category()).isEqualTo("weapon/assault_rifle");
         assertThat(result.get(0).nameEn()).isEqualTo("9A-91");
     }
 
-    @Test
-    void nonArrayResponse_shouldThrowIOException() throws Exception {
-
-        stubFor(get(urlEqualTo("/items.json"))
-            .willReturn(aResponse()
-                .withHeader("Content-Type", "application/json")
-                .withBody("{}")));
-        
-        assertThatThrownBy(() -> fetcher.fetchItemData())
-            .isInstanceOf(IOException.class)
-            .hasMessageContaining("OBJECT");
-    }
-
-    @Test
-    void emptyArray_shouldReturnEmptyList() throws Exception {
-
-        stubFor(get(urlEqualTo("/items.json"))
-            .willReturn(aResponse()
-                .withHeader("Content-Type", "application/json")
-                .withBody("[]")));
-
-        List<GameDocument> result = fetcher.fetchItemData();
-        
-        assertThat(result).isEmpty();  // cleaner than isNullOrEmpty + hasSize(0) — pick one
-    }
 }

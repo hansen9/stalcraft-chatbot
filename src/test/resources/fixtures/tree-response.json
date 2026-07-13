@@ -1,0 +1,23 @@
+{
+  "sha": "5d33a42e1c99d0f23657a4bee575d16396839af4",
+  "url": "https://api.github.com/repos/EXBO-Studio/stalzone-database/git/trees/5d33a42e1c99d0f23657a4bee575d16396839af4",
+  "tree": [
+        {
+        "path": ".gitignore",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "50f506829744b4f27c056d3f3c6dd03f0f304774",
+        "size": 93,
+        "url": "https://api.github.com/repos/EXBO-Studio/stalzone-database/git/blobs/50f506829744b4f27c056d3f3c6dd03f0f304774"
+        },
+        {
+        "path": "global",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+        "size": 11357,
+        "url": "https://api.github.com/repos/EXBO-Studio/stalzone-database/git/blobs/261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+        }
+    ],
+  "truncated": false
+}
