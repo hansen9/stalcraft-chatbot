@@ -5,8 +5,8 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<!-- Pinned to 3.3.x: current LTS, stable Spring AI support, most StackOverflow coverage -->
-		<version>3.3.6</version>
+		<!-- Boot 3.5.x provides the newer Spring Framework and test tooling required for Java 25 -->
+		<version>3.5.0</version>
 		<relativePath/>
 	</parent>
 
@@ -17,8 +17,8 @@
 	<description>Stalzone AI assistant — build advisor, TTK calculator, marketplace trends</description>
 
 	<properties>
-		<!-- Java 21: current LTS. Gives you records, sealed classes, virtual threads. -->
-		<java.version>21</java.version>
+		<!-- Java 25: latest LTS. Gives you records, sealed classes, virtual threads. -->
+		<java.version>25</java.version>
 		<!-- Spring AI BOM version — managed separately from Spring Boot -->
 		<spring-ai.version>1.0.0</spring-ai.version>
 	</properties>

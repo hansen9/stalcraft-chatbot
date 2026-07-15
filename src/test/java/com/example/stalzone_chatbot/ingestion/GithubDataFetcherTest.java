@@ -10,7 +10,8 @@ import org.springframework.web.client.RestClient;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -47,14 +48,15 @@ class GithubDataFetcherTest {
         );
 
         // Stub the GitHub API response for the tree endpoint
-        stubFor(get(urlEqualTo("/git/trees/main?recursive=1"))
+        stubFor(get(urlPathEqualTo("/git/trees/main"))
+            .withQueryParam("recursive", equalTo("1"))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBody(treeResponseBody)));
         
         // stub per-file response
-        stubFor(get(urlEqualTo("/global/items/weapon/assault_rifle/0r2g1.json"))
+        stubFor(get(urlPathEqualTo("/global/items/weapon/assault_rifle/0r2g1.json"))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
