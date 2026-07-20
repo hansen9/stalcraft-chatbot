@@ -45,6 +45,7 @@ public class GithubDataFetcher {
     }
 
     public List<GameDocument> fetchItemData() throws IOException {
+        // TODO: Parallelize GithubDataFetcher raw fetches with virtual threads before widening scope beyond weapon/ — sequential loop will not scale to all items
         log.info("Fetching item data from {}", githubRepo);
         // fetch the git tree to get a list of all files in the repo
         List<String> paths = fetchTree();
@@ -54,7 +55,7 @@ public class GithubDataFetcher {
         List<String> itemPaths = paths.stream()
                 .filter(path -> path.startsWith(itemPathPrefix) && path.endsWith(".json"))
                 .toList();
-        
+        System.out.println("Found " + itemPaths.size() + " item JSON files in GitHub repo");
         // for each path, get raw content, parse, try catch, log and skip the truncated files and errors, and convert to GameDocument
         List<GameDocument> documents = new ArrayList<>();
         for (String path : itemPaths) {
@@ -64,6 +65,7 @@ public class GithubDataFetcher {
                         .retrieve()
                         .body(String.class);
                 JsonNode itemJson = objectMapper.readTree(rawContent);
+                System.out.println("Fetched item JSON for path: " + path);
                 GameDocument doc = parseItemData(itemJson);
                 if (doc.id() != null && !doc.id().isBlank()) {
                     documents.add(doc);
