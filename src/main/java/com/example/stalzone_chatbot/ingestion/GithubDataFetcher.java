@@ -55,7 +55,7 @@ public class GithubDataFetcher {
         List<String> itemPaths = paths.stream()
                 .filter(path -> path.startsWith(itemPathPrefix) && path.endsWith(".json"))
                 .toList();
-        System.out.println("Found " + itemPaths.size() + " item JSON files in GitHub repo");
+        log.debug("Found " + itemPaths.size() + " item JSON files in GitHub repo");
         // for each path, get raw content, parse, try catch, log and skip the truncated files and errors, and convert to GameDocument
         List<GameDocument> documents = new ArrayList<>();
         for (String path : itemPaths) {
@@ -65,8 +65,8 @@ public class GithubDataFetcher {
                         .retrieve()
                         .body(String.class);
                 JsonNode itemJson = objectMapper.readTree(rawContent);
-                System.out.println("Fetched item JSON for path: " + path);
-                GameDocument doc = parseItemData(itemJson);
+                log.debug("Fetched item JSON for path: " + path);
+                GameDocument doc = parseItemData(itemJson, extractLevel(path));
                 if (doc.id() != null && !doc.id().isBlank()) {
                     documents.add(doc);
                 } else {
@@ -112,11 +112,12 @@ public class GithubDataFetcher {
         }
     }
 
-    private GameDocument parseItemData(JsonNode item) {
+    private GameDocument parseItemData(JsonNode item, int level) {
         // parse the item data from JsonNode and return a GameDocument
         
         return new GameDocument(
                 item.path("id").asText(null),
+                level,
                 item.path("category").asText(null),
                 item.path("name").path("key").asText(null),
                 item.path("name").path("lines").path("en").asText(null),
@@ -125,10 +126,27 @@ public class GithubDataFetcher {
                 item.toString()
         );
     }
+    private int extractLevel(String path) {
+        // extract the level from the path, using the "/variants/" segment as a delimiter
+        // ex: global/items/weapon/assault_rifle/variants/0r2g1/2.json
+        // pull the "2" from the last segment of the path, and convert to integer
+        if (!path.contains("/_variants/")) {
+            return 0;
+        }
+        String filename = path.substring(path.lastIndexOf('/') + 1);
+        String levelStr = filename.substring(0, filename.lastIndexOf('.'));
+        try {
+            return Integer.parseInt(levelStr);
+        } catch (NumberFormatException e) {
+            log.warn("Could not parse level from path {}, defaulting to 0", path);
+            return 0;
+        }
+    }
     // A record is perfect here — it's immutable, has equals/hashCode/toString for free,
     // and signals clearly that this is a data carrier, not a behaviour class.
     public record GameDocument(
             String id,
+            int level,
             String category,
             String nameKey,
             String nameEn,

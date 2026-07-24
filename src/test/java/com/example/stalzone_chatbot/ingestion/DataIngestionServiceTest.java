@@ -40,6 +40,7 @@ class DataIngestionServiceTest {
         // Hint: GameDocument is a record — look at its fields
         validDoc = new GithubDataFetcher.GameDocument(
             "0r2g1",
+            0,
             "weapon/assault_rifle",
             "item.wpn.9a91.name",
             "9A-91",
@@ -49,6 +50,7 @@ class DataIngestionServiceTest {
         );
         nullIdDoc = new GithubDataFetcher.GameDocument(
             null,
+            0,
             "weapon/assault_rifle",
             "item.wpn.9a91.name",
             "9A-91",

@@ -15,7 +15,7 @@ import java.util.Optional;
 // You get save(), saveAll(), findById(), findAll(), count(), deleteAll() etc. for free —
 // no SQL, no boilerplate.
 @Repository
-public interface ItemRepository extends JpaRepository<GameItem, String> {
+public interface ItemRepository extends JpaRepository<GameItem, Long> {
 
     // Spring Data derives the SQL from the method name — no @Query needed for simple cases.
     // "findBy" + "Category" → WHERE category = ?
@@ -23,7 +23,7 @@ public interface ItemRepository extends JpaRepository<GameItem, String> {
 
     // Case-insensitive name search — useful for the chatbot's item lookup tool
     // "IgnoreCase" → LOWER(name_en) = LOWER(?)
-    Optional<GameItem> findByNameEnIgnoreCase(String nameEn);
+    Optional<GameItem> findFirstByNameEnIgnoreCaseOrderByLevelDesc(String nameEn);
 
     // Used by the future TODO: skip ingestion if data already exists
     // count() is inherited from JpaRepository — no need to declare it here

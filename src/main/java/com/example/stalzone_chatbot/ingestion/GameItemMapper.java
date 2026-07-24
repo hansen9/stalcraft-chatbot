@@ -28,6 +28,7 @@ public class GameItemMapper {
         GameItem item = new GameItem();
 
         item.setId(doc.id());
+        item.setLevel(doc.level());
         item.setNameEn(doc.nameEn());
         item.setNameKey(doc.nameKey());
         item.setCategory(doc.category());
