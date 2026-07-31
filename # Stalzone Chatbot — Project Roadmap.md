@@ -30,14 +30,23 @@
 
 ---
 
-## Phase 3 — AI Layer 🔄
+## Phase 3 — AI Layer ✅
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 12 | `AiConfig` — configure Spring AI `ChatClient`, system prompt | ✅ | Stalzone-aware system prompt, OpenRouter model |
-| 13 | `ItemLookUpTool` — `@Tool` method, queries `ItemRepository` | ✅ | First Spring AI tool — sets the pattern for all others |
-| 14 | `ChatService` — wires `ChatClient` + tools, conversation memory | ✅ | Stateless first, add memory in Phase 5 |
+| 12 | `AiConfig` — configure Spring AI `ChatClient`, system prompt | ✅ | Stalzone-aware system prompt, OpenRouter model, `MessageWindowChatMemory` + `InMemoryChatMemoryRepository` beans |
+| 13 | `ItemLookUpTool` — `@Tool` method, queries `ItemRepository` | ✅ | First Spring AI tool — sets the pattern for all others. Uses `findFirstByNameEnIgnoreCaseOrderByLevelDesc` (defaults to max upgrade level) |
+| 14 | `ChatService` — wires `ChatClient` + tools, conversation memory | ✅ | `MessageChatMemoryAdvisor` keyed by `chatId`, tools attached per-call |
 | 15 | `ChatController` — `POST /api/chat`, request/response DTOs | ✅ | `ChatRequest`, `ChatResponse` |
-| 16 | `WebConfig` — CORS config for Vue dev server on port 5173 | 🔄 | Needed before frontend can call backend |
+| 16 | `WebConfig` — CORS config for Vue dev server on port 5173 | ✅ | `WebMvcConfigurer`, origin externalized via `stalzone.cors.allowed-origins`, scoped to `/api/**`, GET+POST allowed (GET deliberate, for future read endpoints) |
+
+### Ingestion rework (mid-Phase 3, not originally itemized)
+Triggered by discovering the real repo structure — significant rework to `GithubDataFetcher` / `GameItem` / `GameItemMapper` / `ItemRepository`:
+- **Two-phase fetch**: GitHub Tree API (`/git/trees/main?recursive=1`) enumerates all paths once; each matching path is then fetched individually via `raw.githubusercontent.com`
+- **Two `RestClient` beans** (`githubApiClient`, `githubRawClient`) in new `GithubHttpConfig`, disambiguated via `@Qualifier`, base URLs built from externalized `stalzone.github.*` properties — enables WireMock substitution in tests
+- **Upgrade levels discovered**: each weapon has a base file (level 0) plus 15 upgrade-level files under a `_variants/{itemId}/{level}.json` path — note the **leading underscore** (easy to miss, cost a debugging round)
+- **Schema change**: `GameItem` now uses a surrogate `Long dbId` PK (`@GeneratedValue`); `id` is the game's own string id (no longer unique alone); new `int level` column; `@UniqueConstraint` on `(id, level)`. `ItemRepository extends JpaRepository<GameItem, Long>`
+- **Default lookup behavior**: item lookups default to the *max* upgrade level (matches how community tools present stats)
+- **Rebrand mid-project**: game renamed STALCRAFT:X → STALZONE; data repo renamed to `EXBO-Studio/stalzone-database`; project + package renamed to `stalzone-chatbot` / `stalzone_chatbot`
 
 ---
 
