@@ -19,6 +19,7 @@
 	<properties>
 		<!-- Java 25: latest LTS. Gives you records, sealed classes, virtual threads. -->
 		<java.version>25</java.version>
+		<lombok.version>1.18.46</lombok.version>
 		<!-- Spring AI BOM version — managed separately from Spring Boot -->
 		<spring-ai.version>1.0.0</spring-ai.version>
 	</properties>
@@ -75,6 +76,14 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>annotationProcessor</scope>
 			<optional>true</optional>
 		</dependency>
 
@@ -105,6 +114,22 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.14.0</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
