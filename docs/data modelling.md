@@ -1,0 +1,7 @@
+|Decision|Choice|Reason|Alternative consideration|
+|--------|------|------|-------------------------|
+|Item schema|Single table, `category` column + `statsJson` TEXT(serialized JSON)|Stats vary wildly by category (weapons have RPM, armor has resistance factors) — a normalized table would be mostly nulls and need a migration every time a new stat type shows up|Per-category tables — rejected, schema duplication and maintenance overhead as categories grow|
+|Stat key source|Translation key (`core.tooltip.info.weight`), not display string (`"Weight"`)|Keys are stable across game patches; display text can change|Keying off display string — rejected, breaks silently on a patch|
+|Primary key|Surrogate `Long dbId` + `@UniqueConstraint(id, level)`|Items recur across upgrade levels with the same `id` — needed level as part of identity|Using `id` alone as PK — this is literally what broke during smoke testing (the `_variants` path bug), forcing the constraint fix|
+|Item lookup default|`findFirstByNameEnIgnoreCaseOrderByLevelDesc` (max level)|Players usually care about an item's best/current stats, not level 1|Requiring an explicit level param on every lookup — rejected as unnecessary friction for the common case|
+|Faction identity|Back-filled onto `GameItem` from `barter_recipes.json` during ingestion|`barter_recipes.json` is the authoritative source; item names alone don't reliably encode faction|Inferring faction from item name/key patterns — rejected, too fragile|
