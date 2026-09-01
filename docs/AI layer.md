@@ -1,0 +1,5 @@
+|Decision|Choice|Reason|Alternative considered|
+|--------|------|------|----------------------|
+|LLM's role|Intent extraction + response format only|All math and data retrieval stays in the Spring backend - deterministic, testable, and doesn't depend on the model getting arithmetic right|Letting the LLM compute TTK/BTK directly - rejected, non deterministic and untestable|
+|Chat memory|`InMemoryChatMemoryRepository`->`MessageWindowChatMemory`,keyed by `chatId`|Matches Spring AI 1.0.0's memory model without needing persistent storage for a demo|Persistent chat history - out of scope for a portfolio demo|
+|Service decoupling|`TtkCalculatorService` has zero Spring AI imports|Lets the same service be called directly from a future Vue Slider UI via REST, bypassing the chatbot entirely|Routing all calculator access through the LLM tool layer - rejected, unnecessary indirection for a UI that just needs numbers|
